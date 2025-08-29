@@ -29,7 +29,7 @@ A modern admin dashboard for managing the 35mm film photography application. Bui
 
 - Node.js 18+
 - npm or yarn
-- 35mm API running on `http://localhost:3000`
+- 35mm API running on `http://localhost:3001`
 
 ## Setup
 
@@ -55,7 +55,7 @@ A modern admin dashboard for managing the 35mm film photography application. Bui
    Edit `.env.local` and update the following:
 
    ```env
-   NEXT_PUBLIC_API_URL=http://localhost:3000
+   NEXT_PUBLIC_API_URL=http://localhost:3001
    ADMIN_EMAIL=admin@35mm.com
    ADMIN_PASSWORD=admin123
    JWT_SECRET=your-super-secret-jwt-key-change-this-in-production

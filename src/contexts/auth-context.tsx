@@ -1,70 +1,101 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
-import { api, endpoints, type User, type LoginResponse } from "@/lib/api";
+import { supabase, type SupabaseUser } from "@/lib/supabase";
+import { User } from "@/lib/api";
 
 interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
   isAuthenticated: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+// helper function to convert Supabase user to our User type
+const convertSupabaseUser = (supabaseUser: SupabaseUser): User => ({
+  id: supabaseUser.id,
+  email: supabaseUser.email || "",
+  username:
+    supabaseUser.user_metadata?.username ||
+    (supabaseUser.email ? supabaseUser.email.split("@")[0] : "user"),
+  firstName: supabaseUser.user_metadata?.first_name,
+  lastName: supabaseUser.user_metadata?.last_name,
+  createdAt: supabaseUser.created_at,
+  updatedAt: supabaseUser.updated_at || supabaseUser.created_at,
+});
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // check if user is already logged in
-    const token = localStorage.getItem("admin-token");
-    if (token) {
-      // validate token by making a request
-      api
-        .get(endpoints.users)
-        .then(() => {
-          // if request succeeds, user is authenticated
-          const userData = localStorage.getItem("admin-user");
-          if (userData) {
-            setUser(JSON.parse(userData));
-          }
-        })
-        .catch(() => {
-          // if request fails, clear invalid token
-          localStorage.removeItem("admin-token");
-          localStorage.removeItem("admin-user");
-        })
-        .finally(() => {
-          setIsLoading(false);
-        });
-    } else {
+    // get initial session
+    const getInitialSession = async () => {
+      try {
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+        if (session?.user) {
+          setUser(convertSupabaseUser(session.user));
+        }
+      } catch (error) {
+        console.error("Error getting initial session:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    getInitialSession();
+
+    // listen for auth changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (session?.user) {
+        setUser(convertSupabaseUser(session.user));
+      } else {
+        setUser(null);
+      }
       setIsLoading(false);
-    }
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
   const login = async (email: string, password: string) => {
     try {
-      const response = await api.post<LoginResponse>(endpoints.auth.login, {
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
-      const { user: userData, accessToken } = response.data;
+      if (error) {
+        throw new Error(error.message);
+      }
 
-      localStorage.setItem("admin-token", accessToken);
-      localStorage.setItem("admin-user", JSON.stringify(userData));
-      setUser(userData);
+      if (data.user) {
+        setUser(convertSupabaseUser(data.user));
+      }
     } catch (error) {
-      throw new Error("Invalid credentials");
+      throw new Error(
+        error instanceof Error ? error.message : "Invalid credentials"
+      );
     }
   };
 
-  const logout = () => {
-    localStorage.removeItem("admin-token");
-    localStorage.removeItem("admin-user");
-    setUser(null);
+  const logout = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        console.error("Error signing out:", error);
+      }
+      setUser(null);
+    } catch (error) {
+      console.error("Error during logout:", error);
+    }
   };
 
   const value = {

@@ -1,4 +1,5 @@
 import axios from "axios";
+import { supabase } from "./supabase";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
@@ -9,11 +10,13 @@ export const api = axios.create({
   },
 });
 
-// request interceptor to add auth token
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("admin-token");
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+// request interceptor to add auth token from Supabase
+api.interceptors.request.use(async (config) => {
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  if (session?.access_token) {
+    config.headers.Authorization = `Bearer ${session.access_token}`;
   }
   return config;
 });
@@ -21,9 +24,10 @@ api.interceptors.request.use((config) => {
 // response interceptor to handle auth errors
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem("admin-token");
+      // sign out user if token is invalid
+      await supabase.auth.signOut();
       window.location.href = "/login";
     }
     return Promise.reject(error);

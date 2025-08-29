@@ -1,6 +1,15 @@
-import { clsx, type ClassValue } from "clsx"
-import { twMerge } from "tailwind-merge"
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
+import { format } from "date-fns";
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+  return twMerge(clsx(inputs));
+}
+
+export function formatDate(
+  date: string | Date,
+  formatString: string = "MMM dd, yyyy"
+): string {
+  const dateObj = typeof date === "string" ? new Date(date) : date;
+  return format(dateObj, formatString);
 }

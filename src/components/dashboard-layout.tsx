@@ -14,13 +14,27 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/contexts/auth-context";
-import { Users, Film, Camera, Menu, X, LogOut, User } from "lucide-react";
+import {
+  Users,
+  Film,
+  Camera,
+  Menu,
+  X,
+  LogOut,
+  User,
+  Tag,
+  Building2,
+  Package,
+} from "lucide-react";
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: Camera },
   { name: "Users", href: "/dashboard/users", icon: Users },
   { name: "Films", href: "/dashboard/films", icon: Film },
   { name: "Rolls", href: "/dashboard/rolls", icon: Camera },
+  { name: "Tags", href: "/dashboard/tags", icon: Tag },
+  { name: "Brands", href: "/dashboard/brands", icon: Building2 },
+  { name: "Film Stocks", href: "/dashboard/film-stocks", icon: Package },
 ];
 
 export function DashboardLayout({ children }: { children: React.ReactNode }) {

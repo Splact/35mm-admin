@@ -43,6 +43,9 @@ export const endpoints = {
   users: "/users",
   films: "/films",
   rolls: "/rolls",
+  tags: "/tags",
+  brands: "/brands",
+  filmRollStocks: "/film-roll-stocks",
 } as const;
 
 // types for API responses
@@ -84,6 +87,46 @@ export interface Roll {
   updatedAt: string;
   user: User;
   film: Film;
+}
+
+export interface Tag {
+  id: string;
+  name: string;
+  description?: string;
+  createdAt: string;
+  updatedAt: string;
+  filmRollStocks: FilmRollStock[];
+}
+
+export interface Brand {
+  id: string;
+  name: string;
+  slug: string;
+  description?: string;
+  logoUrl?: string;
+  createdAt: string;
+  updatedAt: string;
+  filmRollStocks: FilmRollStock[];
+}
+
+export interface FilmRollStock {
+  id: string;
+  name: string;
+  slug: string;
+  description?: string;
+  brandId: string;
+  iso: number;
+  primaryColor?: string;
+  secondaryColor?: string;
+  coverImageUrl?: string;
+  rollIconUrl?: string;
+  examplePhotoUrls: string[];
+  exposuresCapacity: number;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+  brand: Brand;
+  tags: Tag[];
 }
 
 export interface LoginResponse {

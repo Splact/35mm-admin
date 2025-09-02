@@ -42,7 +42,8 @@ export const endpoints = {
   },
   users: "/users",
   films: "/films",
-  rolls: "/rolls",
+  filmRolls: "/film-rolls",
+  exposures: "/exposures",
   tags: "/tags",
   brands: "/brands",
   filmRollStocks: "/film-roll-stocks",
@@ -72,21 +73,27 @@ export interface Film {
   updatedAt: string;
 }
 
-export interface Roll {
+export interface FilmRoll {
   id: string;
-  filmId: string;
   userId: string;
-  name: string;
-  description?: string;
-  exposureCount: number;
-  maxExposures: number;
-  isCompleted: boolean;
-  startedAt: string;
-  completedAt?: string;
+  filmRollStockId: string;
+  label: string;
+  isArchived: boolean;
   createdAt: string;
   updatedAt: string;
   user: User;
-  film: Film;
+  filmRollStock: FilmRollStock;
+  exposures: Exposure[];
+}
+
+export interface Exposure {
+  id: string;
+  filmRollId: string;
+  isUploading: boolean;
+  isProcessing: boolean;
+  createdAt: string;
+  updatedAt: string;
+  filmRoll: FilmRoll;
 }
 
 export interface Tag {

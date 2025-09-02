@@ -18,6 +18,7 @@ import {
   Tag,
   Building2,
   Package,
+  Settings,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -69,7 +70,7 @@ export default function DashboardPage() {
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">
-                  Active Rolls
+                  Active Film Rolls
                 </CardTitle>
                 <Camera className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
@@ -84,14 +85,14 @@ export default function DashboardPage() {
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">
-                  Completed Rolls
+                  Total Exposures
                 </CardTitle>
                 <TrendingUp className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">234</div>
+                <div className="text-2xl font-bold">2,847</div>
                 <p className="text-xs text-muted-foreground">
-                  +8.7% from last month
+                  +12.3% from last month
                 </p>
               </CardContent>
             </Card>
@@ -140,6 +141,21 @@ export default function DashboardPage() {
                 <div className="text-2xl font-bold">89</div>
                 <p className="text-xs text-muted-foreground">
                   +11.8% from last month
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">
+                  Processing Exposures
+                </CardTitle>
+                <Settings className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">156</div>
+                <p className="text-xs text-muted-foreground">
+                  +3.4% from last month
                 </p>
               </CardContent>
             </Card>
@@ -210,10 +226,16 @@ export default function DashboardPage() {
                       <p className="text-sm font-medium">Manage Films</p>
                     </div>
                   </Link>
-                  <Link href="/dashboard/rolls">
+                  <Link href="/dashboard/film-rolls">
                     <div className="p-3 border rounded-lg hover:bg-gray-50 cursor-pointer">
                       <Camera className="h-4 w-4 mb-2" />
-                      <p className="text-sm font-medium">View Rolls</p>
+                      <p className="text-sm font-medium">View Film Rolls</p>
+                    </div>
+                  </Link>
+                  <Link href="/dashboard/exposures">
+                    <div className="p-3 border rounded-lg hover:bg-gray-50 cursor-pointer">
+                      <Camera className="h-4 w-4 mb-2" />
+                      <p className="text-sm font-medium">Manage Exposures</p>
                     </div>
                   </Link>
                   <Link href="/dashboard/tags">

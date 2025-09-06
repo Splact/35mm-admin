@@ -21,7 +21,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { api, endpoints, type Tag } from "@/lib/api";
+import { supabaseData } from "@/lib/supabase-data";
+import type { Tag } from "@/lib/api";
 import { formatDate } from "@/lib/utils";
 import { Search, Plus, MoreHorizontal, Edit, Trash2 } from "lucide-react";
 import { toast } from "sonner";
@@ -37,9 +38,10 @@ export default function TagsPage() {
 
   const fetchTags = async () => {
     try {
-      const response = await api.get(endpoints.tags);
-      setTags(response.data);
+      const tagsData = await supabaseData.getTags();
+      setTags(tagsData);
     } catch (error) {
+      console.error("Error fetching tags:", error);
       toast.error("Failed to fetch tags");
     } finally {
       setLoading(false);

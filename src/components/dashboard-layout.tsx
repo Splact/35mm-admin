@@ -17,24 +17,24 @@ import { useAuth } from "@/contexts/auth-context";
 import {
   Users,
   Film,
-  Camera,
+  LayoutDashboard,
+  Images,
   Menu,
   X,
   LogOut,
   User,
   Tag,
-  Building2,
   Package,
+  Target,
 } from "lucide-react";
 
 const navigation = [
-  { name: "Dashboard", href: "/dashboard", icon: Camera },
+  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { name: "Users", href: "/dashboard/users", icon: Users },
-  { name: "Films", href: "/dashboard/films", icon: Film },
-  { name: "Film Rolls", href: "/dashboard/film-rolls", icon: Camera },
-  { name: "Exposures", href: "/dashboard/exposures", icon: Camera },
+  { name: "Film Rolls", href: "/dashboard/film-rolls", icon: Film },
+  { name: "Exposures", href: "/dashboard/exposures", icon: Images },
   { name: "Tags", href: "/dashboard/tags", icon: Tag },
-  { name: "Brands", href: "/dashboard/brands", icon: Building2 },
+  { name: "Brands", href: "/dashboard/brands", icon: Target },
   { name: "Film Stocks", href: "/dashboard/film-stocks", icon: Package },
 ];
 

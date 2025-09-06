@@ -21,7 +21,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { api, endpoints, type User } from "@/lib/api";
+import { supabaseData } from "@/lib/supabase-data";
+import type { User } from "@/lib/api";
 import { formatDate } from "@/lib/utils";
 import { Search, Plus, MoreHorizontal } from "lucide-react";
 import { toast } from "sonner";
@@ -37,9 +38,10 @@ export default function UsersPage() {
 
   const fetchUsers = async () => {
     try {
-      const response = await api.get(endpoints.users);
-      setUsers(response.data);
+      const usersData = await supabaseData.getUsers();
+      setUsers(usersData);
     } catch (error) {
+      console.error("Error fetching users:", error);
       toast.error("Failed to fetch users");
     } finally {
       setLoading(false);

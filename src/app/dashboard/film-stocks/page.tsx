@@ -21,7 +21,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { api, endpoints, type FilmRollStock } from "@/lib/api";
+import { supabaseData } from "@/lib/supabase-data";
+import type { FilmRollStock } from "@/lib/api";
 import { formatDate } from "@/lib/utils";
 import { Search, Plus, MoreHorizontal, Edit, Trash2 } from "lucide-react";
 import { toast } from "sonner";
@@ -37,9 +38,10 @@ export default function FilmStocksPage() {
 
   const fetchFilmStocks = async () => {
     try {
-      const response = await api.get(endpoints.filmRollStocks);
-      setFilmStocks(response.data);
+      const filmStocksData = await supabaseData.getFilmRollStocks();
+      setFilmStocks(filmStocksData);
     } catch (error) {
+      console.error("Error fetching film stocks:", error);
       toast.error("Failed to fetch film stocks");
     } finally {
       setLoading(false);

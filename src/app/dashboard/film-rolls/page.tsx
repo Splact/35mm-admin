@@ -21,7 +21,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { api, endpoints, type FilmRoll } from "@/lib/api";
+import { supabaseData } from "@/lib/supabase-data";
+import { supabase } from "@/lib/supabase";
+import type { FilmRoll } from "@/lib/api";
 import { formatDate } from "@/lib/utils";
 import {
   Search,
@@ -44,9 +46,10 @@ export default function FilmRollsPage() {
 
   const fetchFilmRolls = async () => {
     try {
-      const response = await api.get(endpoints.filmRolls);
-      setFilmRolls(response.data);
+      const filmRollsData = await supabaseData.getFilmRolls();
+      setFilmRolls(filmRollsData);
     } catch (error) {
+      console.error("Error fetching film rolls:", error);
       toast.error("Failed to fetch film rolls");
     } finally {
       setLoading(false);
@@ -72,20 +75,38 @@ export default function FilmRollsPage() {
 
   const handleArchive = async (rollId: string) => {
     try {
-      await api.patch(`${endpoints.filmRolls}/${rollId}/archive`);
+      const { error } = await supabase
+        .from("film_rolls")
+        .update({ is_archived: true })
+        .eq("id", rollId);
+
+      if (error) {
+        throw error;
+      }
+
       toast.success("Film roll archived successfully");
       fetchFilmRolls();
     } catch (error) {
+      console.error("Error archiving film roll:", error);
       toast.error("Failed to archive film roll");
     }
   };
 
   const handleUnarchive = async (rollId: string) => {
     try {
-      await api.patch(`${endpoints.filmRolls}/${rollId}/unarchive`);
+      const { error } = await supabase
+        .from("film_rolls")
+        .update({ is_archived: false })
+        .eq("id", rollId);
+
+      if (error) {
+        throw error;
+      }
+
       toast.success("Film roll unarchived successfully");
       fetchFilmRolls();
     } catch (error) {
+      console.error("Error unarchiving film roll:", error);
       toast.error("Failed to unarchive film roll");
     }
   };

@@ -21,7 +21,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { api, endpoints, type Exposure } from "@/lib/api";
+import { supabaseData } from "@/lib/supabase-data";
+import { supabase } from "@/lib/supabase";
+import type { Exposure } from "@/lib/api";
 import { formatDate } from "@/lib/utils";
 import {
   Search,
@@ -44,9 +46,10 @@ export default function ExposuresPage() {
 
   const fetchExposures = async () => {
     try {
-      const response = await api.get(endpoints.exposures);
-      setExposures(response.data);
+      const exposuresData = await supabaseData.getExposures();
+      setExposures(exposuresData);
     } catch (error) {
+      console.error("Error fetching exposures:", error);
       toast.error("Failed to fetch exposures");
     } finally {
       setLoading(false);
@@ -65,44 +68,76 @@ export default function ExposuresPage() {
 
   const handleUploadStarted = async (exposureId: string) => {
     try {
-      await api.patch(`${endpoints.exposures}/${exposureId}/upload-started`);
+      const { error } = await supabase
+        .from("exposures")
+        .update({ is_uploading: true })
+        .eq("id", exposureId);
+
+      if (error) {
+        throw error;
+      }
+
       toast.success("Upload started");
       fetchExposures();
     } catch (error) {
+      console.error("Error starting upload:", error);
       toast.error("Failed to start upload");
     }
   };
 
   const handleUploadCompleted = async (exposureId: string) => {
     try {
-      await api.patch(`${endpoints.exposures}/${exposureId}/upload-completed`);
+      const { error } = await supabase
+        .from("exposures")
+        .update({ is_uploading: false })
+        .eq("id", exposureId);
+
+      if (error) {
+        throw error;
+      }
+
       toast.success("Upload completed");
       fetchExposures();
     } catch (error) {
+      console.error("Error completing upload:", error);
       toast.error("Failed to complete upload");
     }
   };
 
   const handleProcessingStarted = async (exposureId: string) => {
     try {
-      await api.patch(
-        `${endpoints.exposures}/${exposureId}/processing-started`
-      );
+      const { error } = await supabase
+        .from("exposures")
+        .update({ is_processing: true })
+        .eq("id", exposureId);
+
+      if (error) {
+        throw error;
+      }
+
       toast.success("Processing started");
       fetchExposures();
     } catch (error) {
+      console.error("Error starting processing:", error);
       toast.error("Failed to start processing");
     }
   };
 
   const handleProcessingCompleted = async (exposureId: string) => {
     try {
-      await api.patch(
-        `${endpoints.exposures}/${exposureId}/processing-completed`
-      );
+      const { error } = await supabase
+        .from("exposures")
+        .update({ is_processing: false })
+        .eq("id", exposureId);
+
+      if (error) {
+        throw error;
+      }
+
       toast.success("Processing completed");
       fetchExposures();
     } catch (error) {
+      console.error("Error completing processing:", error);
       toast.error("Failed to complete processing");
     }
   };

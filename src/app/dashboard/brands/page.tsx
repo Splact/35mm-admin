@@ -21,7 +21,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { api, endpoints, type Brand } from "@/lib/api";
+import { supabaseData } from "@/lib/supabase-data";
+import type { Brand } from "@/lib/api";
 import { formatDate } from "@/lib/utils";
 import { Search, Plus, MoreHorizontal, Edit, Trash2 } from "lucide-react";
 import { toast } from "sonner";
@@ -37,9 +38,10 @@ export default function BrandsPage() {
 
   const fetchBrands = async () => {
     try {
-      const response = await api.get(endpoints.brands);
-      setBrands(response.data);
+      const brandsData = await supabaseData.getBrands();
+      setBrands(brandsData);
     } catch (error) {
+      console.error("Error fetching brands:", error);
       toast.error("Failed to fetch brands");
     } finally {
       setLoading(false);

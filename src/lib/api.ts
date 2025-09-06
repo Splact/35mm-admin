@@ -41,7 +41,6 @@ export const endpoints = {
     register: "/auth/register",
   },
   users: "/users",
-  films: "/films",
   filmRolls: "/film-rolls",
   exposures: "/exposures",
   tags: "/tags",
@@ -56,19 +55,6 @@ export interface User {
   username: string;
   firstName?: string;
   lastName?: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface Film {
-  id: string;
-  name: string;
-  brand: string;
-  iso: number;
-  format: string;
-  description?: string;
-  userId: string;
-  user: User;
   createdAt: string;
   updatedAt: string;
 }

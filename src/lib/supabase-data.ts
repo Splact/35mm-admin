@@ -172,7 +172,7 @@ export const supabaseData = {
           tags: [], // will be populated if needed
         },
         exposures:
-          roll.exposures?.map((exposure: any) => ({
+          roll.exposures?.map((exposure: SupabaseExposure) => ({
             id: exposure.id,
             filmRollId: exposure.film_roll_id,
             isUploading: exposure.is_uploading,
@@ -279,7 +279,7 @@ export const supabaseData = {
         createdAt: brand.created_at,
         updatedAt: brand.updated_at,
         filmRollStocks:
-          brand.film_roll_stocks?.map((stock: any) => ({
+          brand.film_roll_stocks?.map((stock: SupabaseFilmRollStock) => ({
             id: stock.id,
             name: stock.name,
             slug: stock.slug,
@@ -347,7 +347,7 @@ export const supabaseData = {
           filmRollStocks: [], // will be populated if needed
         },
         tags:
-          stock.tags?.map((tagRef: any) => ({
+          stock.tags?.map((tagRef: { tag: SupabaseTag }) => ({
             id: tagRef.tag.id,
             name: tagRef.tag.name,
             description: tagRef.tag.description,
@@ -357,5 +357,33 @@ export const supabaseData = {
           })) || [],
       })) || []
     );
+  },
+
+  // create film roll
+  async createFilmRoll(data: {
+    label: string;
+    filmRollStockId: string;
+    userId: string;
+  }): Promise<FilmRoll> {
+    try {
+      const response = await api.post(`${endpoints.filmRolls}`, {
+        label: data.label,
+        filmRollStockId: data.filmRollStockId,
+        userId: data.userId,
+        isArchived: false,
+      });
+
+      return response.data;
+    } catch (error) {
+      console.error("Error creating film roll:", error);
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error";
+      const apiError = error as { response?: { data?: { message?: string } } };
+      throw new Error(
+        `Failed to create film roll: ${
+          apiError.response?.data?.message || errorMessage
+        }`
+      );
+    }
   },
 };

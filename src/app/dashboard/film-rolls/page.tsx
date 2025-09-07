@@ -25,15 +25,9 @@ import { supabaseData } from "@/lib/supabase-data";
 import { supabase } from "@/lib/supabase";
 import type { FilmRoll } from "@/lib/api";
 import { formatDate } from "@/lib/utils";
-import {
-  Search,
-  Plus,
-  MoreHorizontal,
-  Camera,
-  Archive,
-  ArchiveRestore,
-} from "lucide-react";
+import { Search, MoreHorizontal, Archive, ArchiveRestore } from "lucide-react";
 import { toast } from "sonner";
+import { AddFilmRollDialog } from "@/components/add-film-roll-dialog";
 
 export default function FilmRollsPage() {
   const [filmRolls, setFilmRolls] = useState<FilmRoll[]>([]);
@@ -134,10 +128,7 @@ export default function FilmRollsPage() {
                 Manage film rolls and track exposure progress
               </p>
             </div>
-            <Button>
-              <Plus className="mr-2 h-4 w-4" />
-              Add Film Roll
-            </Button>
+            <AddFilmRollDialog onFilmRollCreated={fetchFilmRolls} />
           </div>
 
           <Card>

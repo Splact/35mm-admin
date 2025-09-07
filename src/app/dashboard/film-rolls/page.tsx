@@ -25,14 +25,29 @@ import { supabaseData } from "@/lib/supabase-data";
 import { supabase } from "@/lib/supabase";
 import type { FilmRoll } from "@/lib/api";
 import { formatDate } from "@/lib/utils";
-import { Search, MoreHorizontal, Archive, ArchiveRestore } from "lucide-react";
+import {
+  Search,
+  MoreHorizontal,
+  Archive,
+  ArchiveRestore,
+  Edit,
+} from "lucide-react";
 import { toast } from "sonner";
 import { AddFilmRollDialog } from "@/components/add-film-roll-dialog";
+import { EditFilmRollDialog } from "@/components/edit-film-roll-dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export default function FilmRollsPage() {
   const [filmRolls, setFilmRolls] = useState<FilmRoll[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+  const [editingFilmRoll, setEditingFilmRoll] = useState<FilmRoll | null>(null);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
 
   useEffect(() => {
     fetchFilmRolls();
@@ -103,6 +118,11 @@ export default function FilmRollsPage() {
       console.error("Error unarchiving film roll:", error);
       toast.error("Failed to unarchive film roll");
     }
+  };
+
+  const handleEditFilmRoll = (roll: FilmRoll) => {
+    setEditingFilmRoll(roll);
+    setEditDialogOpen(true);
   };
 
   if (loading) {
@@ -217,9 +237,21 @@ export default function FilmRollsPage() {
                                 <Archive className="h-4 w-4" />
                               </Button>
                             )}
-                            <Button variant="outline" size="sm">
-                              <MoreHorizontal className="h-4 w-4" />
-                            </Button>
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="outline" size="sm">
+                                  <MoreHorizontal className="h-4 w-4" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                <DropdownMenuItem
+                                  onClick={() => handleEditFilmRoll(roll)}
+                                >
+                                  <Edit className="mr-2 h-4 w-4" />
+                                  Edit
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
                           </div>
                         </TableCell>
                       </TableRow>
@@ -230,6 +262,15 @@ export default function FilmRollsPage() {
             </CardContent>
           </Card>
         </div>
+
+        {editingFilmRoll && (
+          <EditFilmRollDialog
+            filmRoll={editingFilmRoll}
+            open={editDialogOpen}
+            onOpenChange={setEditDialogOpen}
+            onFilmRollUpdated={fetchFilmRolls}
+          />
+        )}
       </DashboardLayout>
     </ProtectedRoute>
   );

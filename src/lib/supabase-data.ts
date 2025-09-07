@@ -386,4 +386,30 @@ export const supabaseData = {
       );
     }
   },
+
+  // update film roll
+  async updateFilmRoll(
+    id: string,
+    data: {
+      label?: string;
+      filmRollStockId?: string;
+      userId?: string;
+      isArchived?: boolean;
+    }
+  ): Promise<FilmRoll> {
+    try {
+      const response = await api.patch(`${endpoints.filmRolls}/${id}`, data);
+      return response.data;
+    } catch (error) {
+      console.error("Error updating film roll:", error);
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error";
+      const apiError = error as { response?: { data?: { message?: string } } };
+      throw new Error(
+        `Failed to update film roll: ${
+          apiError.response?.data?.message || errorMessage
+        }`
+      );
+    }
+  },
 };
